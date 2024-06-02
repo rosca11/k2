@@ -37,6 +37,7 @@ public class ProductControl extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		try {
 		if (request.getParameter("action") != null && request.getParameter("action").compareTo("dettaglio") == 0) {
 			String codiceStr = request.getParameter("codice");
 			int codice = Integer.parseInt(codiceStr);
@@ -121,6 +122,13 @@ public class ProductControl extends HttpServlet {
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/ProductsPage.jsp?tipologia=" + tipologia);
 		dispatcher.forward(request, response);
 		}
+		}
+		catch (Exception e) {
+            // Loggare l'errore
+            e.printStackTrace();
+            // Mostrare una pagina di errore personalizzata
+            request.getRequestDispatcher("/error500.jsp").forward(request, response);
+        }
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
