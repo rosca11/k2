@@ -1,6 +1,7 @@
 package control;
 
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -52,14 +53,14 @@ public class Register extends HttpServlet {
 		String redirectedPage = "/loginPage.jsp";
 		try {
 			Connection con = DriverManagerConnectionPool.getConnection();
-			String sql = "INSERT INTO UserAccount(email, passwordUser, nome, cognome, indirizzo, telefono, numero, intestatario, CVV) VALUES (?, MD5(?), ?, ?, ?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO UserAccount(email, passwordUser, nome, cognome, indirizzo, telefono, numero, intestatario, CVV) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			String sql2 = "INSERT INTO Cliente(email) VALUES (?)";
 			String sql3 = "INSERT INTO Venditore(email) VALUES (?)";
 			
 			//Aggiungi a AccountUser
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, email);
-			ps.setString(2, password);
+			ps.setString(2, hashPassword(password));
 			ps.setString(3, nome);
 			ps.setString(4, cognome);
 			ps.setString(5, indirizzo);
@@ -92,4 +93,19 @@ public class Register extends HttpServlet {
 		}
 		response.sendRedirect(request.getContextPath() + redirectedPage);
 	}
+	
+	private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -59,7 +59,7 @@ public class Login extends HttpServlet {
 			
 			while (rs.next()) {
 				if (email.compareTo(rs.getString(1)) == 0) {
-					String psw = checkPsw(password);
+					String psw = hashPassword(password);
 					if (psw.compareTo(rs.getString(2)) == 0) {
 						control = true;
 						UserBean registeredUser = new UserBean();
@@ -98,19 +98,20 @@ public class Login extends HttpServlet {
 		response.sendRedirect(request.getContextPath() + redirectedPage);
 	}
 		
-	private String checkPsw(String psw) {
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		byte[] messageDigest = md.digest(psw.getBytes());
-		BigInteger number = new BigInteger(1, messageDigest);
-		String hashtext = number.toString(16);
-		
-		return hashtext;
+	private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+   
 	}
 
 }
