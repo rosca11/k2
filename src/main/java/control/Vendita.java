@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -59,7 +60,7 @@ public class Vendita extends HttpServlet {
 		                    product.setImmagine(name);
 		                }
 		                else {
-		                	if (item.getFieldName().compareTo("nome") == 0) {
+		                	if (item.getFieldName().compareTo("nome") == 0 ) {
 		                		product.setNome(item.getString());
 		                	}
 		                	else if (item.getFieldName().compareTo("prezzo") == 0) {
@@ -112,5 +113,5 @@ public class Vendita extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-
+	
 }
